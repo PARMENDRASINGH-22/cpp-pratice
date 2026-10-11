@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CineShare — Movies Anywhere</title>
+
+<style>
+:root {
+  --bg: #050914;
+  --panel: #0b1224;
+  --border: #202c47;
+  --purple: #a855f7;
+  --blue: #477bff;
+  --text: #f5f6ff;
+  --muted: #9caacb;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background:
+    radial-gradient(ellipse at 65% 0%, #17234a 0%, transparent 45%),
+    var(--bg);
+  color: var(--text);
+  font-family: Arial, sans-serif;
+  min-height: 100vh;
+}
+
+button, input {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+header {
+  min-height: 104px;
+  padding: 22px 3%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+  background:
+    linear-gradient(90deg, #081020, #151b3c, #101127);
+  border-bottom: 1px solid var(--border);
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+}
+
+.logo {
+  font-size: 43px;
+  color: #9e79ff;
+}
+
+.brand h1 {
+  font-size: 29px;
+  letter-spacing: -1px;
+}
+
+.brand h1 span {
+  color: #b18aff;
+}
+
+.brand p {
+  color: var(--muted);
+  margin-top: 6px;
+  font-size: 14px;
+}
+
+.share-btn, .action-btn {
+  border: 1px solid #303b61;
+  background: #111a32;
+  color: white;
+  padding: 12px 18px;
+  border-radius: 25px;
+}
+
+.share-btn:hover, .action-btn:hover {
+  background: #22294b;
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: 225px minmax(0, 1fr);
+  min-height: calc(100vh - 104px);
+}
+
+.sidebar {
+  padding: 25px 15px;
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+
+.nav-btn {
+  text-align: left;
+  border: 0;
+  background: transparent;
+  color: #b4c0df;
+  padding: 15px;
+  border-radius: 10px;
+  font-size: 15px;
+}
+
+.nav-btn.active, .nav-btn:hover {
+  background: linear-gradient(100deg, #1554bd, #4b25a8);
+  color: white;
+}
+
+.quote {
+  margin-top: 24px;
+  padding: 15px 8px;
+  border-top: 1px solid var(--border);
+  color: var(--muted);
+  line-height: 1.7;
+}
+
+main {
+  min-width: 0;
+  padding: 35px;
+}
+
+.columns {
+  display: grid;
+  grid-template-columns: minmax(0, 2.1fr) minmax(230px, 1fr);
+  gap: 25px;
+}
+
+.heading {
+  font-size: clamp(26px, 3vw, 39px);
+  line-height: 1.2;
+  margin: 5px 0 12px;
+}
+
+.gradient-text {
+  background: linear-gradient(90deg, #5c82ff, #d16cff);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.subtitle {
+  color: var(--muted);
+  margin-bottom: 30px;
+}
+
+.accent-line {
+  width: 48px;
+  height: 4px;
+  border-radius: 5px;
+  background: linear-gradient(90deg, #3997ff, #b14cff);
+  margin-top: -17px;
+  margin-bottom: 17px;
+}
+
+.player-wrap {
+  overflow: hidden;
+  border: 1px solid #45416f;
+  border-radius: 14px;
+  background: #000;
+}
+
+video {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  display: block;
+  background:
+    radial-gradient(ellipse at 50% 100%, #162954, transparent 60%),
+    linear-gradient(145deg, #121c39, #03050b);
+  object-fit: contain;
+}
+
+#status {
+  color: #c0c8e5;
+  font-size: 13px;
+  margin-top: 12px;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+
+.movie-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 24px 0 12px;
+}
+
+.movie-heading h2 {
+  font-size: 26px;
+}
+
+.hd {
+  background: #30206a;
+  color: #dfc9ff;
+  padding: 5px 8px;
+  border-radius: 5px;
+  font-size: 11px;
+  vertical-align: middle;
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 9px;
+  margin-bottom: 17px;
+}
+
+.tag {
+  background: #111b33;
+  padding: 8px 12px;
+  border-radius: 20px;
+  color: #cbd4f0;
+  font-size: 13px;
+}
+
+.description {
+  color: var(--muted);
+  line-height: 1.8;
+  font-size: 14px;
+}
+
+.features {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-top: 28px;
+}
+
+.feature {
+  padding: 17px 12px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: #0a1120;
+  text-align: center;
+}
+
+.feature .symbol {
+  font-size: 24px;
+  margin-bottom: 10px;
+}
+
+.feature p {
+  color: var(--muted);
+  font-size: 12px;
+  margin-top: 7px;
+  line-height: 1.5;
+}
+
+.right-column {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.card {
+  background: linear-gradient(145deg, #0c1427, #080d1b);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 20px;
+}
+
+.poster {
+  width: 150px;
+  height: 205px;
+  margin: 0 auto 22px;
+  border: 1px solid #7051a7;
+  border-radius: 10px;
+  background:
+    radial-gradient(ellipse at 70% 25%, #c15c91, transparent 25%),
+    linear-gradient(150deg, #483e85, #182b51 50%, #060916);
+  display: flex;
+  align-items: end;
+  justify-content: center;
+  padding: 17px;
+  text-align: center;
+  font-size: 23px;
+  font-weight: bold;
+  letter-spacing: 2px;
+  text-shadow: 0 2px 8px black;
+}
+
+.card h3 {
+  font-size: 16px;
+  margin-bottom: 16px;
+}
+
+.detail {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 12px 0;
+  border-bottom: 1px solid #202a40;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.detail span:last-child {
+  color: #dce4ff;
+  text-align: right;
+  overflow-wrap: anywhere;
+}
+
+.detail:last-child {
+  border-bottom: 0;
+}
+
+.quote-card {
+  color: #c4c9e5;
+  line-height: 1.7;
+}
+
+.quote-card strong {
+  display: block;
+  font-size: 26px;
+  color: #c17aff;
+  margin-bottom: 7px;
+}
+
+.popcorn {
+  background: linear-gradient(120deg, #101b38, #201346);
+  color: #e4e7ff;
+  text-align: center;
+  line-height: 1.8;
+}
+
+footer {
+  color: #7885a8;
+  text-align: center;
+  padding: 25px;
+  font-size: 12px;
+}
+
+#linkPanel {
+  display: none;
+  margin-top: 15px;
+  padding: 15px;
+  background: #10182b;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+}
+
+#linkPanel input {
+  width: 100%;
+  margin: 10px 0;
+  padding: 12px;
+  background: #070b14;
+  color: white;
+  border: 1px solid #303b61;
+  border-radius: 7px;
+}
+
+@media (max-width: 1000px) {
+  .layout {
+    grid-template-columns: 1fr;
+  }
+
+  .sidebar {
+    flex-direction: row;
+    overflow-x: auto;
+    padding: 12px;
+    border-right: 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .nav-btn {
+    white-space: nowrap;
+  }
+
+  .quote {
+    display: none;
+  }
+
+  main {
+    padding: 22px;
+  }
+
+  .columns {
+    grid-template-columns: 1fr;
+  }
+
+  .right-column {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 560px) {
+  header {
+    padding: 18px;
+  }
+
+  .brand h1 {
+    font-size: 23px;
+  }
+
+  .brand p {
+    font-size: 11px;
+  }
+
+  .logo {
+    font-size: 32px;
+  }
+
+  .share-btn {
+    padding: 10px;
+    font-size: 12px;
+  }
+
+  main {
+    padding: 17px;
+  }
+
+  .features {
+    grid-template-columns: 1fr;
+  }
+
+  .right-column {
+    display: flex;
+  }
+
+  .movie-heading h2 {
+    font-size: 21px;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <div class="brand">
+    <div class="logo">▶</div>
+    <div>
+      <h1>Cine<span>Share</span></h1>
+      <p>Movies. Anywhere. Together.</p>
+    </div>
+  </div>
+
+  <button class="share-btn" id="shareBtn">🔗 Share Link</button>
+</header>
+
+<div class="layout">
+
+  <aside class="sidebar">
+    <button class="nav-btn active" data-target="home">⌂ &nbsp; Home</button>
+    <button class="nav-btn" data-target="details">▣ &nbsp; My Movie</button>
+    <button class="nav-btn" data-target="about">ⓘ &nbsp; About</button>
+    <button class="nav-btn" data-target="settings">⚙ &nbsp; Settings</button>
+
+    <div class="quote">
+      ✦<br>
+      “Good movies<br>
+      make better days.”
+    </div>
+  </aside>
+
+  <main id="home">
+    <div class="columns">
+
+      <section>
+        <h2 class="heading">
+          Watch Your <span class="gradient-text">Favourite Movies</span>
+        </h2>
+        <p class="subtitle">Stream · Pause · Seek · Enjoy</p>
+        <div class="accent-line"></div>
+
+        <div class="player-wrap">
+          <video id="moviePlayer" controls playsinline preload="metadata">
+            Your browser does not support HTML video.
+          </video>
+        </div>
+
+        <p id="status">
+          ✨ Your movie will appear here once its video link is connected.
+        </p>
+
+        <div id="linkPanel">
+          <label for="movieUrl">Direct video URL</label>
+          <input id="movieUrl" type="url"
+                 placeholder="Paste your hosted .mp4 video link">
+          <label for="movieName">Movie title</label>
+          <input id="movieName" type="text" placeholder="Enter movie title">
+          <button class="action-btn" id="loadBtn">Load Movie</button>
+          <button class="action-btn" id="copyBtn">Copy Website Link</button>
+        </div>
+
+        <div class="movie-heading" id="details">
+          <h2><span id="titleDisplay">Your Movie</span> <span class="hd">HD</span></h2>
+          <button class="action-btn" id="likeBtn">♡ Like</button>
+        </div>
+
+        <div class="tags">
+          <span class="tag">◷ Your movie</span>
+          <span class="tag">🎬 Cinema</span>
+          <span class="tag">✦ Movie night</span>
+        </div>
+
+        <p class="description">
+          Your personal movie space, designed for a cinematic experience.
+          Add your video link and share your movie room with a friend.
+        </p>
+
+        <div class="features">
+          <div class="feature">
+            <div class="symbol">▶</div>
+            <strong>Play / Pause</strong>
+            <p>Use the built-in player controls.</p>
+          </div>
+          <div class="feature">
+            <div class="symbol">⏪</div>
+            <strong>Seek</strong>
+            <p>Move forward or backward on the timeline.</p>
+          </div>
+          <div class="feature">
+            <div class="symbol">⛶</div>
+            <strong>Fullscreen</strong>
+            <p>Enjoy a bigger viewing experience.</p>
+          </div>
+        </div>
+      </section>
+
+      <aside class="right-column">
+        <section class="card">
+          <div class="poster" id="poster">YOUR<br>MOVIE</div>
+          <h3>▣ &nbsp; Movie Details</h3>
+
+          <div class="detail">
+            <span>⚒ Title</span>
+            <span id="sideTitle">Your Movie</span>
+          </div>
+          <div class="detail">
+            <span>◷ Duration</span>
+            <span id="duration">Not available</span>
+          </div>
+          <div class="detail">
+            <span>◈ Genre</span>
+            <span>Movie</span>
+          </div>
+          <div class="detail">
+            <span>✦ Quality</span>
+            <span>Source quality</span>
+          </div>
+        </section>
+
+        <section class="card quote-card" id="about">
+          <strong>❝</strong>
+          “Sometimes the greatest adventures are the ones we watch together.”
+          <div class="accent-line" style="margin-top:15px;margin-bottom:0"></div>
+        </section>
+
+        <section class="card popcorn" id="settings">
+          🍿<br>
+          <strong>Enjoy the movie!</strong>
+          <p>Thanks for being here. ❤️</p>
+        </section>
+      </aside>
+
+    </div>
+  </main>
+</div>
+
+<footer>CineShare · Made for movie nights ❤️</footer>
+
+<script>
+const player = document.getElementById("moviePlayer");
+const statusText = document.getElementById("status");
+const linkPanel = document.getElementById("linkPanel");
+const urlInput = document.getElementById("movieUrl");
+const nameInput = document.getElementById("movieName");
+
+document.getElementById("shareBtn").addEventListener("click", async () => {
+  if (navigator.share) {
+    try {
+      await navigator.share({
+        title: "CineShare",
+        text: "Open my CineShare movie room",
+        url: location.href
+      });
+    } catch (e) {
+      // Sharing was cancelled or unavailable.
+    }
+  } else if (navigator.clipboard && window.isSecureContext) {
+    try {
+      await navigator.clipboard.writeText(location.href);
+      alert("Website link copied!");
+    } catch (e) {
+      linkPanel.style.display = "block";
+      statusText.textContent = "Copy your website URL from the address bar.";
+    }
+  } else {
+    linkPanel.style.display = "block";
+    statusText.textContent = "Copy your website URL from the browser address bar.";
+  }
+});
+
+document.querySelectorAll(".nav-btn").forEach(button => {
+  button.addEventListener("click", () => {
+    document.querySelectorAll(".nav-btn").forEach(b =>
+      b.classList.remove("active")
+    );
+    button.classList.add("active");
+
+    const target = document.getElementById(button.dataset.target);
+    if (target) target.scrollIntoView({ behavior: "smooth" });
+  });
+});
+
+document.getElementById("loadBtn").addEventListener("click", () => {
+  const url = urlInput.value.trim();
+  const name = nameInput.value.trim() || "Your Movie";
+
+  try {
+    const parsed = new URL(url);
+
+    if (!["https:", "http:"].includes(parsed.protocol)) {
+      throw new Error("Please enter a valid HTTP or HTTPS video URL.");
+    }
+
+    player.src = parsed.href;
+    player.load();
+
+    document.getElementById("titleDisplay").textContent = name;
+    document.getElementById("sideTitle").textContent = name;
+    document.getElementById("poster").textContent = name.toUpperCase();
+    document.title = "CineShare — " + name;
+
+    statusText.textContent =
+      "Video link added. Wait for loading, then press Play.";
+  } catch (e) {
+    statusText.textContent =
+      e.message || "Please enter a valid video URL.";
+  }
+});
+
+player.addEventListener("loadedmetadata", () => {
+  const seconds = Math.floor(player.duration);
+
+  if (Number.isFinite(seconds)) {
+    const hours = Math.floor(seconds / 3600);
+    const minutes = Math.floor((seconds % 3600) / 60);
+
+    document.getElementById("duration").textContent =
+      hours ? `${hours}h ${minutes}m` : `${minutes} min`;
+  }
+
+  statusText.textContent = "Movie ready. Enjoy watching!";
+});
+
+player.addEventListener("error", () => {
+  statusText.textContent =
+    "Video failed to load. Check the video URL, permissions and format.";
+});
+
+document.getElementById("likeBtn").addEventListener("click", event => {
+  const liked = event.currentTarget.dataset.liked === "true";
+  event.currentTarget.dataset.liked = String(!liked);
+  event.currentTarget.textContent = liked ? "♡ Like" : "♥ Liked";
+});
+
+document.getElementById("copyBtn").addEventListener("click", async () => {
+  try {
+    await navigator.clipboard.writeText(location.href);
+    statusText.textContent = "Website link copied!";
+  } catch (e) {
+    statusText.textContent = "Copy the website URL from your browser address bar.";
+  }
+});
+</script>
+
+</body>
+</html>
